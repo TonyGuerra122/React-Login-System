@@ -11,17 +11,17 @@ app.use(express.json());
 const db = mysql.createPool({
     host: "localhost",
     user: "root",
-    password: "",
+    password: "1234",
     database: "node_teste"
 })
 
 app.post("/logou", (req, res) => {
-    const { email } = req.body;
-    const { password } = req.body;
+    let { email } = req.body;
+    let { password } = req.body;
 
     let hash = crypto.createHash('md5').update(password).digest('rex');
 
-    let sql = "SELECT COUNT(id) AS count FROM node_teste.usuarios WHERE email = ? AND senha = ?";
+    let sql = "SELECT COUNT(id) AS count, nome, email, senha FROM node_teste.usuarios WHERE email = ? AND senha = ?";
 
     db.query(sql, [email, hash], (err, result) => {
         if(err){
@@ -29,11 +29,27 @@ app.post("/logou", (req, res) => {
             return
         }
         
-        console.log(result);
         res.json(result);
     })
 
 })
+app.post("/verify", (req, res) =>{
+    let {email} = req.body;
+    let {password} = req.body;
+    
+    let sql = "SELECT COUNT(id) AS count FROM node_teste.usuarios WHERE email = ? AND senha = ?";
+    
+    let hash = crypto.createHash('md5').update(password).digest('rex');
+
+    db.query(sql, [email, hash], (err, result) =>{
+        if(err){
+            console.log(err)
+            return;
+        }
+        res.json(result);
+    })
+})
+
 app.listen(port, (err) =>{
     if(err){
         console.log(err)

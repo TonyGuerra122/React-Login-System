@@ -15,10 +15,15 @@ function LoginForm(){
         axios.post('http://localhost:3001/logou', data).then(
             (response) => {
                 const {count} = response.data[0];
+                const {nome} = response.data[0]; 
+                const {email} = response.data[0];
+                const {senha} = response.data[0];
 
-                console.log(count);
 
                 if(count >= 1){
+                    sessionStorage.user = nome;
+                    sessionStorage.email = email;
+                    sessionStorage.password = senha;
                     window.location.href = "/home";
                 }
             })
